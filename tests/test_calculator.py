@@ -1,32 +1,32 @@
 # tests/test_calculator.py
 
-from selenium import webdriver
 import unittest
+from flask import Flask
+from app import app
 
 class CalculatorTest(unittest.TestCase):
     def setUp(self):
-        self.driver = webdriver.Chrome()
-        self.driver.get("http://localhost:5000")
+        self.app = app.test_client()
 
     def test_addition(self):
-        num1_input = self.driver.find_element_by_id("num1")
-        num2_input = self.driver.find_element_by_id("num2")
-        submit_button = self.driver.find_element_by_xpath("//button[@type='submit']")
+        response = self.app.post('/add', data=dict(num1='5', num2='3'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'The result is: 8.0', response.data)
 
-        num1_input.send_keys("5")
-        num2_input.send_keys("3")
-        submit_button.click()
+    def test_subtraction(self):
+        response = self.app.post('/subtract', data=dict(num1='8', num2='3'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'The result is: 5.0', response.data)
 
-        result_element = self.driver.find_element_by_xpath("//p[contains(text(), 'The result is:')]")
-        result = result_element.text.split(":")[1].strip()
+    def test_multiplication(self):
+        response = self.app.post('/multiply', data=dict(num1='4', num2='2'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'The result is: 8.0', response.data)
 
-        self.assertEqual(result, "8")
+    def test_division(self):
+        response = self.app.post('/divide', data=dict(num1='10', num2='2'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'The result is: 5.0', response.data)
 
-    # Add similar test methods for subtraction, multiplication, and division
-
-    def tearDown(self):
-        self.driver.quit()
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
-
