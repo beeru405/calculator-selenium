@@ -16,8 +16,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Run Selenium tests
-                    sh 'python -m unittest tests.test_calculator'
+                    // Update the path to the Python executable
+                    sh '/usr/bin/python3 -m unittest tests.test_calculator'
                 }
             }
         }
